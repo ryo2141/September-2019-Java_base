@@ -11,6 +11,9 @@ public class GachaStream {
 	private static final int S_RARE = 25;
 	private static final int RARE = 50;
 	private static final int NORMAL = 200;
+	private static int border = 0;
+	private static Random rnd = new Random();
+	private static int gachaNum = rnd.nextInt(1000);
 
 	private static final List<Card> cardList = new ArrayList<>();
 	static {
@@ -27,79 +30,22 @@ public class GachaStream {
 
 	public static void main(String[] args) {
 
-		Random rnd = new Random();
-		List<String> hitCardList = new ArrayList<>();
-
-		// ガチャを引く（0～999までのランダム変数）
-		int gachaNum = rnd.nextInt(1000);
-
-		// 確率判定用のボーダー
-		int border = 0;
-
-		for (Card card : cardList) {
-			border += card.getRate();
-
-			if (gachaNum < border) {
-				hitCardList.add(card.getName());
-				break;
-			}
-		}
-
-		int borderUpdate = border;
-
 		Predicate<Card> p = new Predicate<Card>() {
 			public boolean test(Card card) {
-				if (gachaNum < borderUpdate) {
+				border += card.getRate();
+				if (gachaNum < border) {
+					border -= 114514;
 					return true;
 				}
-
 				return false;
 			}
 		};
 
-		for (int i = 0; i < GACHA_TIMES; i++) {
+		for (int j = 0; j < GACHA_TIMES; j++) {
 			cardList.stream().filter(p).forEach(t -> System.out.println(t.getName()));
+			gachaNum = rnd.nextInt(1000);
+			border = 0;
 		}
 
 	}
-}
-
-class Card {
-
-	private int rate;
-	private String name;
-
-	public Card(int rate, String name) {
-		this.rate = rate;
-		this.name = name;
-	}
-
-	/**
-	 * @return rate
-	 */
-	public int getRate() {
-		return rate;
-	}
-
-	/**
-	 * @param rate セットする rate
-	 */
-	public void setRate(int rate) {
-		this.rate = rate;
-	}
-
-	/**
-	 * @return name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name セットする name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
 }
